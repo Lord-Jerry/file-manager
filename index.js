@@ -41,8 +41,25 @@ class FileManager {
     try {
       const { COPYFILE_EXCL } = fs.constants;
       files.forEach((data) => {
-        if (data.endsWith('.jpg') || data.endsWith('.png') || data.endsWith('.jpeg') || data.endsWith('.gif')) {
+        // if file has a image extention, copy to picture folder and delete from downloads folder
+        if (data.endsWith('.jpg') || data.endsWith('.png')
+          || data.endsWith('.jpeg') || data.endsWith('.gif')
+        ) {
           fs.copyFileSync(`${downloads}/${data}`, `${pictures}/${data}`, COPYFILE_EXCL);
+          fs.unlinkSync(`${downloads}/${data}`);
+        }
+
+        // // if file has a video extention, copy to video folder and delete from downloads folder
+        if (data.endsWith('.mp4') || data.endsWith('.avi')
+          || data.endsWith('.mkv') || data.endsWith('.3gp')
+        ) {
+          fs.copyFileSync(`${downloads}/${data}`, `${vidoes}/${data}`, COPYFILE_EXCL);
+          fs.unlinkSync(`${downloads}/${data}`);
+        }
+
+        // // if file has a audio extention, copy to music folder and delete from downloads folder
+        if (data.endsWith('.mp3')) {
+          fs.copyFileSync(`${downloads}/${data}`, `${music}/${data}`, COPYFILE_EXCL);
           fs.unlinkSync(`${downloads}/${data}`);
         }
       });
@@ -52,8 +69,9 @@ class FileManager {
   }
 
   static async run() {
+    const { copyFiles } = this;
     await this.getDownloads();
-    this.copyFiles();
+    copyFiles();
   }
 }
 
