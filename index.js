@@ -14,6 +14,9 @@ const files = [];
  *
  */
 class FileManager {
+  /**
+   * this method helps get all the file in the download directory
+   */
   static async getDownloads() {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
@@ -29,16 +32,23 @@ class FileManager {
           return reject();
         }
         console.log(e);
-        reject();
+        return reject();
       }
     });
   }
 
   static copyFiles() {
-    // console.log(files);
-    files.forEach((data) => {
-      console.log(data);
-    });
+    try {
+      const { COPYFILE_EXCL } = fs.constants;
+      files.forEach((data) => {
+        if (data.endsWith('.jpg') || data.endsWith('.png') || data.endsWith('.jpeg') || data.endsWith('.gif')) {
+          fs.copyFileSync(`${downloads}/${data}`, `${pictures}/${data}`, COPYFILE_EXCL);
+          fs.unlinkSync(`${downloads}/${data}`);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   static async run() {
