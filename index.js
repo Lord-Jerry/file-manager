@@ -1,36 +1,49 @@
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 const fs = require('fs');
+
+const home = process.env.HOME;
+const downloads = `${home}/Downloads`;
+const pictures = `${home}/Pictures`;
+const vidoes = `${home}/Videos`;
+const music = `${home}/Music`;
+
+const files = [];
+
 /**
- * 
+ *
  */
 class FileManager {
-
-  static home = process.env.HOME;
-  static downloads = `${this.home}/Downloads`;
-  static pictures = `${this.home}/Pictures`;
-  static vidoes = `${this.home}/Videos`;
-  static music = `${this.home}/Music`;
-
-  static files = [];
-
   static async getDownloads() {
-    try {
-      // check if the download directory is available
-      await fs.promises.opendir(this.downloads);
-
-      const temp = fs.readdirSync(this.downloads);
-      this.files.push(...temp);
-      console.log(this.files, 1);
-    } catch (e) {
-      if (e.code && e.code === 'ENOENT') {
-        console.error(e.message);
-        return;
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      try {
+        // check if the download directory is available
+        await fs.promises.opendir(downloads);
+        const temp = fs.readdirSync(downloads);
+        files.push(...temp);
+        return resolve();
+      } catch (e) {
+        if (e.code && e.code === 'ENOENT') {
+          console.error(e.message);
+          return reject();
+        }
+        console.log(e);
+        reject();
       }
-      console.log(err);
-    }
+    });
+  }
+
+  static copyFiles() {
+    // console.log(files);
+    files.forEach((data) => {
+      console.log(data);
+    });
   }
 
   static async run() {
-    this.getDownloads();
+    await this.getDownloads();
+    this.copyFiles();
   }
 }
 
